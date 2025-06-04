@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechVibe-Products</title>
+    <link rel="stylesheet" href="style.css">
+
+
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h2 class="logo">TechVibe</h2>
+            <ul class="nav-menu">
+                    <li>    <a href="index.html"Home>Home </a></li>
+                    <li>    <a href="Products.html"Products>Products </a></li>
+                    <li>    <a href="contact.html"Contact> contact  </a></li>
+                    <li>     <a href="cart.html" class="cart-link">Cart (<span id="cart-count">0</span>) </a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="containter">
+            <h1 class="page-title">Our Products</h1>
+
+            <!---Folter Buttons-->
+            <div class="filters">
+                <button class="fliter-btn active" data-category="all">All Products</button>
+                <button class="fliter-btn" data-category="phones">Phones</button>
+                <button class="fliter-btn" data-category="laptops">Laptops</button>
+                <button class="fliter-btn" data-category="accessories">Accessories</button>
+            </div>
+                             <!---Products here-->
+                    <div class="products-grid" id="products-grid">
+                        <!--JavaScript will populate products here-->
+                    </div>
+        </div>
+    </main>
+
+    
+    <footer class="footer">
+        <p>&copy; 2025 TechVibe. All rights reserved.</p>
+    </footer>
+
+                        <!-- To link JavaScript -->
+
+    <script src="script.js"></script>
+
+</body>
+</html>
