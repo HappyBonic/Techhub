@@ -258,4 +258,125 @@ document.addEventListener('DOMContentLoaded', function() {
     
  });
 
+    // Function to update item quantity in cart//
+
+function updateQuantity(productId, quantity) {
+    console.log('Updating quantity for product', productId, 'to', newQuantity);
+    if (item) {
+        if (newQuantity <= 0) {
+            // If quantity is 0 or less, remove the item//
+            removeFromCart(productId);
     
+        } else {
+            // Update the quantity//
+            item.quantity = newQuantity;
+          updateCartCount();
+          saveCart();
+          displayCartItems();
+          updateCartCount();
+         }
+        }
+    }
+
+// Function to remove item from cart//
+
+    function createCartItemHTML(item) {
+        return `
+            <div class="cart-item">
+                <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+                <div class="cart-item-details">
+                    <h4 class="cart-item-name">${item.name}</h4>
+                    <p class="cart-item-price">${formatPrice(item.price)} each</p>
+                    </div>
+                    <div class="cart-item-controls">
+                       <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">
+                       -
+                       </button>
+                          <span class="quantity-display">${item.quantity}</span>
+                          <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">
+                          +
+                          </button> 
+                </div>
+                <div class="cart-item-total">${formatPrice(item.price * item.quantity)}
+                <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+                </div>  
+            </div>
+        `; 
+                    
+    }
+
+                // Function to display cart items in the cart page//    
+        function displayCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const emptyCartElement = document.getElementById('empty-cart');
+
+            // Only run this code if we are on the cart page//
+
+            if (!cartItemsContainer) return;
+            if (cart.length === 0) {
+                // show empty cart message//
+                cartItemsContainer.style.display = 'none';
+                if (emptyCartElement) emptyCartElement.style.display = 'block';
+                document.querySelector(',cart-summary').style.display = 'none';
+            } else {
+                // Show cart items//
+                cartItemsContainer.style.display = 'block';
+                if (emptyCartElement) emptyCartElement.style.display = 'none';
+                document.querySelector('.cart-summary').style.display = 'block';
+            
+                // Generate HTML for each cart item//
+                cartItemsContainer.innerHTML = cart.map(createCartItemHTML).join('');
+                } 
+            }
+
+                    // Function to calculate and update cart summary//
+     function updateCartSummary() {
+        // Calculate totals//
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shipping = subtotal > 0 ? 9.99 : 0;
+        const taxt = subtotal * 0.08 // 8% tax rate
+        const total = subtotal + shipping + taxt;
+
+        // Update the display//
+        const subtotalElement = document.getElementById('cart-subtotal');
+        const shippingElement = document.getElementById('cart-shipping');
+        const taxElement = document.getElementById('cart-tax');
+        const totalElement = document.getElementById('cart-total');
+
+        if (subtotalElement) subtotalElement.textContent = formatPrice(subtotal);
+        if (shippingElement) shippingElement.textContent = formatPrice(shipping);
+        if (taxElement) taxElement.textContent = formatPrice(tax);
+        if (totalElement) totalElement.textContent = formatPrice(total);
+        console.log('cart summary - Subtotal:', formatPrice(subtotal),
+                    'Shipping:', formatPrice(shipping),
+                    'Tax:', formatPrice(tax),
+                    'Total:', formatPrice(total));
+    }
+
+                // Function to go to checkout//
+function goToCheckout() {
+    if (cart.length === 0) {
+        alert('Your cart is empty! Please add items before checking out.');
+        return;
+    }
+    // Redirect to checkout page//
+    window.location.href = 'checkout.html';
+}
+
+                        // Update our page load function to handle cart page//
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, displaying products...');
+    loadCart(); // Load saved cart//
+    displayProducts();
+    setupFilter(); // Setup filters//
+    
+    // If we are on the cart page, display cart items//
+    if (document.getElementById('cart-items')) {
+        displayCartItems();
+        updateCartSummary(); // Update cart summary//
+    }
+});
+
+
+  
+  
