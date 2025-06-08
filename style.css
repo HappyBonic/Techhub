@@ -565,3 +565,120 @@ body{
                     grid-template-columns:1fr;
                 }
             }
+
+            /* Contact page styles */
+            
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    margin-bottom: 60px;
+}
+.contact-info {
+    padding: 30px;
+}
+.contact-info h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #1e293b;
+}
+.contact-info p {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+.contact-item h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #3b82f6;
+}
+.contact-item p {
+    color: #374151;
+    margin: 0;
+    font-size: 14px;
+}
+.contact-form {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+}
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .nav-menu {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .hero h1 {
+        font-size: 32px;
+    }
+    .hero p {
+        font-size: 16px;
+    }
+    .hero {
+        padding: 120px 20px 60px;
+    }
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .filters {
+        flex-direction: column;
+        align-items: center;
+    }
+    .page-title {
+        font-size: 28px;
+    }
+}
+ /* Smooth scrolling */
+ html {
+    scroll-behavior: smooth; 
+ } 
+  /* Loading animation */
+ .loading {
+        display:inline-block ;
+        width:20px;
+        height:20px;
+        border: 3px solid #f3f3f3 ;
+        border-top : 3px solid #3b82f6; 
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+ }
+    @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+       

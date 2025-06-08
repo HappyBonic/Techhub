@@ -125,7 +125,6 @@ function viewProduct(productId){
 document.addEventListener('DOMContentLoaded', function() {
     console.log('page loaded, displaying products...');
     displayProducts(products);
-});
 
 // Fuctions to handle filter bitton clicks//
 
@@ -378,5 +377,282 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
   
-  
+         // Functions to display checkout items//
+function createCheckoutItemHTML() {
+    const checkoutItemsContainer = document.getElementById('checkout-items');
+    if (!checkoutItemsContainer || cart.length === 0)
+        return;
+    const itemsHTML = cart.map(item => `
+        <div class="checkout-item">
+            <img src="${item.image}" alt="${item.name}" class="checkout-item-image">
+            <div class="checkout-item-details">
+                <div class="checkout-item-name">${item.name}</div>
+                <div class="checkout-item-price">${formatPrice(item.price * item.quantity)}</div>
+            </div>  
+            <div class="checkout-item-quantity">Quantity: ${item.quantity}</div>
+        </div>
+    `).join('');
+    checkoutItemsContainer.innerHTML = itemsHTML;
+}
+
+           // Function to update checkout summary//
+function updateCheckoutSummary() {
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = subtotal > 0 ? 9.99 : 0;
+    const tax = subtotal * 0.08; // 8% tax rate
+    const total = subtotal + shipping + tax;
+
+             // Update Checkout Summary Elements//
+    const subtotalElement = document.getElementById('checkout-subtotal');
+    const shippingElement = document.getElementById('checkout-shipping');
+    const taxElement = document.getElementById('checkout-tax');
+    const totalElement = document.getElementById('checkout-total');
+
+    if (subtotalElement) subtotalElement.textContent = formatPrice(subtotal);
+    if (shippingElement) shippingElement.textContent = shipping > 0 ? formatPrice(shipping) : 'Free';
+    if (taxElement) taxElement.textContent = formatPrice(tax);
+    if (totalElement) totalElement.textContent = formatPrice(total);
+}
+
+                   // Simple form Validation functions//
+function validateForm(email) {
+    // check if rmail contains '@'//
+    return email.includes('@') && email.includes('.');
+}
+function validateCardNumber(cardNumber) {
+    // Remove spaces and check if its 16 digits//
+    const clearNumber = cardNumber.repalace(/\s/g, '');
+    return /^\d{16}$/.test(clearNumber);
+}
+
+        // Function to process the order (simulate)//
+function processOrder(formdata) {
+    // in real website, this would send data to the server//
+    // for now, we will just simualte it with a delay//
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            // clear the cart after successful order//
+            cart = [];
+            updateCartCount();
+            saveCart();
+            resolve({
+                success: true,
+                message: 'Order placed successfully! Thank you for your purchase!'
+            });
+        }, 2000); // Simulate 2 seconds delay//
+    });
+}
+             // Functions to show order success//
+function showOrderSuccess(orderInfo) {
+    const container = document.querySelector('.container');
+    container.innerHTML = `
+        <div class="success-message">
+            <h2>� Order is placed successfully!</h2>
+            <p>Thank you for your purchase!</p>
+            <p><strong>Order Number:</strong> ${orderInfo.orderNumber}</p>
+            <p>You will receive a confirmation email at ${orderInfo.email}.shortly.</p>
+            <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+        </div>
+    `;
+}
+                  // Update our page load function to handle checkout page//
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded...');
+        loadCart(); // Load saved cart//
+        displayProducts(); // Display products//    
+        setupFilters(); // Setup filters//
+
+        // cart page//
+        if (document.getElementById('cart-items')) {
+            displayCartItems();
+            updateCartSummary(); // Update cart summary//
+        }
+    });
+
+    // checkout page//
+    if (document.getElementById('checkout-form')) {
+        // redirect to cart if empty//
+        if (cart.length === 0) {
+            alert('Your cart is empty! Please add items before checking out.');
+            window.location.href = 'products.html';
+            return;
+    }
+           createCheckoutItemHTML();
+           updateCheckoutSummary();
+
+           // Handle form submission//
+           const checkoutForm = document.getElementById('checkout-form');
+           checkoutForm.addEventListener('submit', async function(e) {
+                e.preventDefault(); // prevent normal form submission//
+
+                // Get form data//
+                const formData = new FormData(checkoutForm);
+                const data = Object.fromEntries(formData);
+
+                // Simple Validation//
+                let isValid = true;
+                const errors = [];
+                if (!validateEmail(data.email)) {
+                    errors.push('Please enter a valid email address.');
+                    isValid = false;
+                }
+                if (!validateCardNumber(data.cardNumber)) {
+                    errors.push('Please enter a valid 16-digit card number.');
+                    isValid = false;
+                }
+                if (!isValid) {
+                    alert('Please fix the following errors:\n' + errors.join('\n'));
+                    return;
+                }
+
+                // Show loading state//
+                const submitButton = checkoutForm.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.textContent;
+                submitButton.textContent = 'Processing...';
+                submitButton.disabled = true;
+
+                try {
+                    const result = await processOrder(data);
+                    if (result.success) {
+                        // Show success message//
+                        showOrderSuccess(result);
+                    }
+                } catch (error) {
+                    alert('There was an error processing your order. Please try again.');
+                    submitButton.textContent = originalButtonText;
+                    submitButton.disabled = false;
+                }
+            });
+        }
+    });
+// Function to handle contact form submission
+function handleContactForm() {
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Stop the form from submitting normally
+
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData);
+
+            // Simple validation
+            let isValid = true;
+            const errors = [];
+
+            if (!data.name || !data.name.trim()) {
+                errors.push('Name is required');
+                isValid = false;
+            }
+
+            if (!validateEmail(data.email)) {
+                errors.push('Please enter a valid email address');
+                isValid = false;
+            }
+
+            if (!data.subject) {
+                errors.push('Please select a subject');
+                isValid = false;
+            }
+
+            if (!data.message || !data.message.trim()) {
+                errors.push('Message is required');
+                isValid = false;
+            } else if (data.message.trim().length < 10) {
+                errors.push('Message must be at least 10 characters long');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                alert('Please fix the following errors:\n' + errors.join('\n'));
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            // Simulate sending the message
+            setTimeout(() => {
+                alert("Thank you for your message! We'll get back to you soon.");
+                contactForm.reset(); // Clear the form
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+    }
+}
+ // Update our main page load function // Update our main page load function
+ document.addEventListener( 'DOMContentLoaded', function( )  { {
+        console.log( ('Page loaded...') ); ;
+        loadCart();
+        displayProducts();
+        setupFilters();
+        
+        // Cart page
+        if (document.getElementById('cart-items')) {
+                displayCartItems();
+                updateCartSummary();
+        }
+        
+        // Checkout page
+        if (document.getElementById('checkout-form')) {
+                if (cart.length === 0) {
+                        alert('Your cart is empty!');
+                        window.location.href = 'products.html';
+                        return;
+                }
+                
+                displayCheckoutItems();
+                updateCheckoutSummary();
+                
+                const checkoutForm = document.getElementById('checkout-form');
+                checkoutForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        
+                        const formData = new FormData(checkoutForm);
+                        const data = Object.fromEntries(formData);
+                        
+                        let isValid = true;
+                        const errors = [];
+                        
+                        if (!validateEmail(data.email)) {
+                                errors.push('Please enter a valid email address');
+                                isValid = false;
+                        }
+                        
+                        if (!validateCardNumber(data.cardNumber)) {
+                                errors.push('Please enter a valid 16-digit card number');
+                                isValid = false;
+                        }
+                        
+                        if (!isValid) {
+                                alert('Please fix the following errors:\n' + errors.join('\n'));
+                                return;
+                        }
+                        
+                        const submitBtn = checkoutForm.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+                        submitBtn.textContent = 'Processing...';
+                        submitBtn.disabled = true;
+                        
+                        try {
+                                const result = await processOrder(data);
+                                if (result.success) {
+                                        showOrderSuccess(result);
+                                }
+                        } catch (error) {
+                                alert('There was an error processing your order. Please try again.');
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                        }
+                });
+        }
+        
+        // Contact page
+        handleContactForm();
+ } });
